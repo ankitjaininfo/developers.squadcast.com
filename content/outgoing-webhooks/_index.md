@@ -9,13 +9,11 @@ meta:
 
 # Outgoing Webhooks
 
-Webhooks allow you to connect a platform that you manage (either an API that you create by yourself, or a third party service) to a stream of future events.
+Outgoing webhooks in Squadcast allow you to receive real-time notifications about events as they happen, without polling the API or checking the web/mobile app manually. By configuring a webhook, Squadcast will send structured event data (as JSON) to your specified endpoint whenever selected triggers occur.
 
-Setting up a webhook on Squadcast enables you to receive information (referred to as events) from Squadcast as they happen. This can help you avoid continuously polling Squadcast’s REST APIs or manually checking the Squadcast web/mobile application for desired information.
+This enables seamless integration with your internal tools, third-party services, or custom workflows, making it easier to act on incidents, automate escalations, or maintain audit trails. This document outlines how to configure outgoing webhooks in Squadcast, details the supported event types, and explains delivery behavior, filtering options, and logging features.
 
-The rest of this document will explain how you can set up these webhooks, as well as list the events that can be sent to your webhook destinations.
-
-Make sure you have the pre-requisite permissions to set up outgoing webhooks.
+Ensure that you have the necessary permissions before proceeding with webhook setup.
 
 ## Supported Events
 
@@ -23,7 +21,7 @@ The webhook that you have configured can be triggered for certain events occurri
 
 You can choose multiple triggers for a webhook. Information is sent to the provided URLs if any of the triggers match.
 
-In the legacy version v1, only limited events are supported whereas the latest version v2, supports an exhaustive list of events.
+In the legacy version v1, only limited events are supported, whereas the latest version v2, supports an exhaustive list of events.
 
 For **v1 events**, [refer here](./payload/v1/).
 
@@ -59,3 +57,13 @@ Click on the expand icon on any of the individual logs to view the payload that 
 Configure the Name, Description and Failure Notification email in the Settings tab. This is particularly helpful when you (or an administrator) would want to be notified for webhook-related failures.
 
 
+## Optional: Test Payloads
+
+During integration, it’s often useful to observe and debug outbound webhook calls before forwarding them to production systems. This helps ensure that your receiving endpoint is ready and that the payloads from Squadcast are as expected. You can use [Beeceptor](https://beeceptor.com/webhook-integration/) to set up a temporary HTTPS endpoint to receive and inspect Squadcast’s outgoing webhook payloads. This allows you to:
+
+- View full request bodies and headers
+- Verify event formats for v1 or v2 payloads
+- Confirm behavior across different Squadcast trigger conditions
+- Identify any formatting or delivery issues before forwarding to downstream systems
+
+Once validated, you can either update the Squadcast configuration with your real endpoint or configure Beeceptor to forward requests to your destination URL.
