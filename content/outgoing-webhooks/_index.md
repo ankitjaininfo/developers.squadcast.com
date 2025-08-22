@@ -9,37 +9,30 @@ meta:
 
 # Outgoing Webhooks
 
-Webhooks allow you to connect a platform that you manage (either an API that you create by yourself, or a third party service) to a stream of future events.
+Outgoing webhooks allow Squadcast to notify external systems in real time when specific events occur—eliminating the need to poll APIs or manually monitor the Squadcast UI. You can configure Squadcast to send event data to your own services or third-party tools using HTTP requests.
 
-Setting up a webhook on Squadcast enables you to receive information (referred to as events) from Squadcast as they happen. This can help you avoid continuously polling Squadcast’s REST APIs or manually checking the Squadcast web/mobile application for desired information.
+This feature enables deeper integration with your infrastructure, automation workflows, and incident response tooling.
 
-The rest of this document will explain how you can set up these webhooks, as well as list the events that can be sent to your webhook destinations.
-
-Make sure you have the pre-requisite permissions to set up outgoing webhooks.
+This guide explains how to configure outgoing webhooks in Squadcast, the list of supported events, and how data is delivered to your endpoint. Before starting, ensure you have the necessary permissions to manage webhook settings.
 
 ## Supported Events
 
-The webhook that you have configured can be triggered for certain events occurring in Squadcast. 
+You can configure a webhook to be triggered by one or more events within Squadcast. Once configured, Squadcast sends a JSON payload to your specified URL(s) whenever a matching event occurs.
 
-You can choose multiple triggers for a webhook. Information is sent to the provided URLs if any of the triggers match.
+- v1 Webhooks: Support a limited set of event types. View [v1 event schema](./payload/v1/).
+- v2 Webhooks: Offer a broader range of events. View [v2 event schema](./payload/v2/).
 
-In the legacy version v1, only limited events are supported whereas the latest version v2, supports an exhaustive list of events.
-
-For **v1 events**, [refer here](./payload/v1/).
-
-For **v2 events**, [refer here](./payload/v2/).
-
-If your use-case requires more Squadcast events to be supported, please reach out to our Support team with details of the same.
+If you need support for additional events, contact our Support team with your use case.
 
 ## Communication Protocol for Webhooks
 
-A webhook is called whenever the configured events occur in Squadcast.
+Squadcast sends webhook payloads using the HTTP POST method with a `Content-Type: application/json` header. A webhook is triggered every time a selected event occurs.
 
-A webhook call is made using the HTTP POST method to the URL(s) that were added when the webhook was configured, with a body that is encoded using JSON.
+Successful delivery expects a `2xx` HTTP response code from your server. If a non-2xx response is returned, Squadcast retries the request up to **three times**.
 
-Squadcast expects that the server that responds to the webhook will return a 2xx response code upon success. If a non-2xx response is received, Squadcast will retry the request for a maximum of 3 times.
+## Setting up Webhooks
 
-## URLs and Headers
+### URLs and Headers
 
 We support the addition of multiple URL endpoints, with POST, PUT and PATCH methods. 
 
@@ -47,15 +40,27 @@ Incident payloads will be sent to all the URL endpoints that are added.
  
 You can also configure additional headers. These headers will get attached to all the webhook calls that will be made based on this configuration.
 
-## Filters
+### Filters
 You can filter on top of events from the Services and Alert Sources drop-downs, either by having an individual expression or a combination of expressions/expression groups.
 
-## Logs
-Once the webhook call has been made, you can view the logs for it in the Logs tab.
+### Logs
 
-Click on the expand icon on any of the individual logs to view the payload that has been sent across.
+After a webhook is triggered, you can inspect the delivery status in the Logs tab. Click the expand icon on any log entry to view:
 
-## Additional Settings
-Configure the Name, Description and Failure Notification email in the Settings tab. This is particularly helpful when you (or an administrator) would want to be notified for webhook-related failures.
+- Timestamp
+- Full payload
+- Delivery response
 
+### Additional Settings
+In the Settings tab, you can configure:
+- Webhook name and description
+- Failure notification email, so admins or owners are alerted in case of delivery issues
 
+## Test and Validate Webhook Payloads
+
+To safely observe outgoing webhook behavior during development or troubleshooting, consider using a tool like [Beeceptor](https://beeceptor.com/webhook-integration/) to create a temporary HTTPs catch all endpoint. This allows you to:
+- Capture and inspect headers and JSON payloads from Squadcast
+- Validate behavior for different event triggers
+- Confirm formatting before forwarding to your production systems
+
+Once verified, replace the temporary URL with your actual endpoint or configure forwarding within Beeceptor for ongoing visibility.
